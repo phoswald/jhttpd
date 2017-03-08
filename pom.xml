@@ -13,6 +13,8 @@
   <packaging>jar</packaging>
 
   <name>${project.artifactId}</name>
+  <description>A minimalistic, docker friendly HTTP(S) server</description>
+  <url>https://github.com/phoswald/${project.artifactId}</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -56,5 +58,12 @@
       </plugin>
     </plugins>
   </build>
+
+  <scm>
+    <connection>scm:git:https://github.com/phoswald/${project.artifactId}.git</connection>
+    <developerConnection>scm:git:https://github.com/phoswald/${project.artifactId}.git</developerConnection>
+    <url>https://github.com/phoswald/${project.artifactId}/tree/master</url>
+    <tag>HEAD</tag>
+  </scm>
 
 </project>

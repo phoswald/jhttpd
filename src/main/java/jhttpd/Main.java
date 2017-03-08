@@ -11,20 +11,23 @@ import styx.http.server.Server;
 public class Main {
 
     private static final Logger logger = Logger.getLogger(Main.class.getName());
-    private static final Path content = Paths.get("content").toAbsolutePath();
 
     public static void main(String[] args) {
         Arguments arguments = new Arguments("jhttpd", args);
+
         boolean secure = arguments.getBoolean("secure").orElse(false);
+        String domain = arguments.getString("domain").orElse("localhost");
         int port = arguments.getInteger("port").orElse(secure ? 443 : 80);
+        Path content = arguments.getPath("content").orElse(Paths.get("content")).toAbsolutePath();
+//      String home = arguments.getString("home").orElse(".");
 
         logger.info("Starting (port: " + port + ", content: " + content + ").");
         try(Server server = new Server()) {
             server.
-                secure(secure).
+                secure(secure, domain).
                 port(port).
                 routes(
-                    route().path("/").toFileSystem(content.resolve("index.html")),
+  //                route().path("/").toFileSystem(content.resolve(home)),
                     route().path("/ping").to((req, res) -> res.write("JHTTPD is running!\n")),
                     route().path("/**").toFileSystem(content)).
                 run();

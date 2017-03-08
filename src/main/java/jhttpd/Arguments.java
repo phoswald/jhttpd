@@ -1,5 +1,7 @@
 package jhttpd;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -39,5 +41,9 @@ class Arguments {
             return Optional.of(env);
         }
         return Optional.empty();
+    }
+
+    Optional<Path> getPath(String name) {
+        return getString(name).map(Paths::get);
     }
 }
