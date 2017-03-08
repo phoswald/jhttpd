@@ -25,7 +25,7 @@ Arguments can be passed as command line arguments, JVM system properties, and en
 Valid arguments are:
 
 
-- -secure=<true|false> to use HTTPS or HTTP (default: false, i.e. HTTP)
-- -domain=<qualified domain name> defines the host name (default: localhost, used for self-signed SSL certificate)
-- -port=<number> to select the TCP port (default: 80 for HTTP, 443 for HTTPS)
-- -content=<path> defines the file system path to be served (default: content)
+- -secure=*true|false* to use HTTPS or HTTP (default: false, i.e. HTTP)
+- -domain=*qualified domain name* defines the host name (default: localhost, used for self-signed SSL certificate)
+- -port=*number* to select the TCP port (default: 80 for HTTP, 443 for HTTPS)
+- -content=*path* defines the file system path to be served (default: content)
