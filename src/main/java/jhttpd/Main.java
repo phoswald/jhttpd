@@ -6,15 +6,21 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.logging.Logger;
 
+import styx.daemon.utils.Arguments;
+import styx.daemon.utils.Daemon;
+import styx.daemon.utils.LogConfig;
 import styx.http.server.Server;
 
 public class Main {
+
+    static {
+        LogConfig.activate();
+    }
 
     private static final Logger logger = Logger.getLogger(Main.class.getName());
 
     public static void main(String[] args) {
         Arguments arguments = new Arguments("jhttpd", args);
-
         boolean secure = arguments.getBoolean("secure").orElse(false);
         String domain = arguments.getString("domain").orElse("localhost");
         int port = arguments.getInteger("port").orElse(secure ? 443 : 80);
@@ -22,16 +28,19 @@ public class Main {
 //      String home = arguments.getString("home").orElse(".");
 
         logger.info("Starting (port: " + port + ", content: " + content + ").");
-        try(Server server = new Server()) {
-            server.
-                secure(secure, domain).
-                port(port).
-                routes(
-  //                route().path("/").toFileSystem(content.resolve(home)),
-                    route().path("/ping").to((req, res) -> res.write("JHTTPD is running!\n")),
-                    route().path("/**").toFileSystem(content)).
-                run();
-        }
+
+        Server server = new Server().
+            secure(secure, domain).
+            port(port).
+            routes(
+//              route().path("/").toFileSystem(content.resolve(home)),
+                route().path("/ping").to((req, res) -> res.write("JHTTPD is running!\n")),
+                route().path("/**").toFileSystem(content));
+
+        Daemon.main(server::run, server::close, Main::done);
+    }
+
+    private static void done() {
         logger.info("Stopped.");
     }
 }
