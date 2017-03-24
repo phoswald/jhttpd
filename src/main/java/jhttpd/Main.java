@@ -4,6 +4,7 @@ import static styx.http.server.Server.route;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.concurrent.CountDownLatch;
 import java.util.logging.Logger;
 
 import styx.daemon.utils.Arguments;
@@ -20,6 +21,10 @@ public class Main {
     private static final Logger logger = Logger.getLogger(Main.class.getName());
 
     public static void main(String[] args) {
+        Daemon.main(args, Main::run);
+    }
+
+    private static void run(String[] args, CountDownLatch latch) throws InterruptedException {
         Arguments arguments = new Arguments("jhttpd", args);
         boolean secure = arguments.getBoolean("secure").orElse(false);
         String domain = arguments.getString("domain").orElse("localhost");
@@ -29,18 +34,16 @@ public class Main {
 
         logger.info("Starting (port: " + port + ", content: " + content + ").");
 
-        Server server = new Server().
-            secure(secure, domain).
+        try(Server server = new Server()) {
+            server.secure(secure, domain).
             port(port).
             routes(
 //              route().path("/").toFileSystem(content.resolve(home)),
                 route().path("/ping").to((req, res) -> res.write("JHTTPD is running!\n")),
-                route().path("/**").toFileSystem(content));
+                route().path("/**").toFileSystem(content)).
+            run(latch);
+        }
 
-        Daemon.main(server::run, server::close, Main::done);
-    }
-
-    private static void done() {
         logger.info("Stopped.");
     }
 }
