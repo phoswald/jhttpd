@@ -27,21 +27,25 @@ public class Main {
     private static void run(String[] args, CountDownLatch latch) throws InterruptedException {
         Arguments arguments = new Arguments("jhttpd", args);
         boolean secure = arguments.getBoolean("secure").orElse(false);
-        String domain = arguments.getString("domain").orElse("localhost");
+        String host = arguments.getString("host").orElse("localhost");
         int port = arguments.getInteger("port").orElse(secure ? 443 : 80);
+        Path certFullChain = arguments.getPath("cert-full-chain").orElse(null);
+        Path certPrivateKey = arguments.getPath("cert-private-key").orElse(null);
         Path content = arguments.getPath("content").orElse(Paths.get("content")).toAbsolutePath();
 //      String home = arguments.getString("home").orElse(".");
 
         logger.info("Starting (port: " + port + ", content: " + content + ").");
 
         try(Server server = new Server()) {
-            server.secure(secure, domain).
-            port(port).
-            routes(
-//              route().path("/").toFileSystem(content.resolve(home)),
-                route().path("/ping").to((req, res) -> res.write("JHTTPD is running!\n")),
-                route().path("/**").toFileSystem(content)).
-            run(latch);
+            server.secure(secure).
+                    host(host).
+                    port(port).
+                    certificate(certFullChain, certPrivateKey).
+                    routes(
+//                      route().path("/").toFileSystem(content.resolve(home)),
+                        route().path("/ping").to((req, res) -> res.write("JHTTPD is running!\n")),
+                        route().path("/**").toFileSystem(content)).
+                    run(latch);
         }
 
         logger.info("Stopped.");

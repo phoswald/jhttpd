@@ -26,6 +26,8 @@ Valid arguments are:
 
 
 - -secure=*true|false* to use HTTPS or HTTP (default: false, i.e. HTTP)
-- -domain=*qualified domain name* defines the host name (default: localhost, used for self-signed SSL certificate)
+- -host=*host name* defines the fully qualified domain name (default: localhost, used for self-signed SSL certificate)
 - -port=*number* to select the TCP port (default: 80 for HTTP, 443 for HTTPS)
+- -cert-full-chain=*path* to select an SSL certificate (default: not specified, self-signed)
+- -cert-private-key=*path* to select an SSL certificate's secret primary key (default: not specified, self-signed)
 - -content=*path* defines the file system path to be served (default: content)
